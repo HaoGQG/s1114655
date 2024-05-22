@@ -1,5 +1,7 @@
 package com.example.s1114655
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +10,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -71,7 +78,7 @@ fun SecondScreen(navController: NavController) {
             text = "主要機構",
             color = Color.Red
         )
-        //twobutton()
+        twobutton()
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,14 +175,15 @@ fun Animation(){
 @Composable
 fun twobutton(){
     var appear by remember { mutableStateOf(true) }
+    val context = LocalContext.current
     var h1 by remember { mutableStateOf("「台中市愛心家園」經市政府公開評選後，委託瑪利亞基金會經營管理，於91年啟用，整棟建築物有四個樓層，目前開辦就醫、就養、就學、就業四大領域的十項業務，提供身心障礙者全方位的服務。\n") }
-    var h2 by remember { mutableStateOf("長按以下圖片，可以觀看愛心家園地圖\n") }
+    var h2 by remember { mutableStateOf("長按以下圖片，可以觀看愛心家園地圖") }
     Column {
         Row {
             Button(
                 onClick = {
                         h1 = "「台中市愛心家園」經市政府公開評選後，委託瑪利亞基金會經營管理，於91年啟用，整棟建築物有四個樓層，目前開辦就醫、就養、就學、就業四大領域的十項業務，提供身心障礙者全方位的服務。\n"
-                        h2 = "長按以下圖片，可以觀看愛心家園地圖\n"
+                        h2 = "長按以下圖片，可以觀看愛心家園地圖"
                 }
             ) {
                 Text(text = "台中市愛心家園")
@@ -183,7 +191,7 @@ fun twobutton(){
             Button(
                 onClick = {
                         h1 = "「瑪利亞學園」提供重度以及極重度多重障礙者日間照顧服務，以健康照護為基礎，支持生活多面向參與及學習概念，輔助發展重度身心障礙者自我概念為最終服務目標。\n"
-                        h2 = "雙擊以下圖片，可以觀看瑪利亞學園地圖\n"
+                        h2 = "雙擊以下圖片，可以觀看瑪利亞學園地圖"
                 }
             ) {
                 Text(text = "瑪利亞學園")
@@ -191,5 +199,38 @@ fun twobutton(){
         }
         Text(text = h1)
         Text(text = h2, color = Color.Blue)
+        if(h2 == "長按以下圖片，可以觀看愛心家園地圖"){
+            Image(
+                painter = painterResource(id = R.drawable.lovehome),
+                contentDescription = "lovehome",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                var it = Intent(Intent.ACTION_VIEW)
+                                it.data = Uri.parse("geo:0,0?q=台中市南屯區東興路一段450號")
+                                context.startActivity(it)
+                            }
+                        )
+                    }
+            )
+        }else{
+            Image(
+                painter = painterResource(id = R.drawable.campus),
+                contentDescription = "campus",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                var it = Intent(Intent.ACTION_VIEW)
+                                it.data = Uri.parse("geo:0,0?q=台中市北屯區經貿東路365號")
+                                context.startActivity(it)
+                            }
+                        )
+                    }
+            )
+        }
     }
 }
