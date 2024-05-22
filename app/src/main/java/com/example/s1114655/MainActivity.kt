@@ -3,11 +3,17 @@ package com.example.s1114655
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,13 +54,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun FirstScreen(navController: NavController){
+
     Column(modifier = Modifier
         .fillMaxSize()
     ){
-        Text(
-            text = "簡介",
-            color = Color.Blue
-        )
+        Animation()
     }
 
 }
@@ -67,7 +71,7 @@ fun SecondScreen(navController: NavController) {
             text = "主要機構",
             color = Color.Red
         )
-
+        //twobutton()
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,5 +113,83 @@ fun Main() {
                 SecondScreen(navController = navController)
             }
         }
+    }
+}
+@Composable
+fun Animation(){
+    var appear by remember { mutableStateOf(true) }  //背景出現
+    var h by remember { mutableStateOf("瑪利亞基金會服務總覽") }
+    Column {
+       Text(text = h, color = Color.Blue)
+        AnimatedVisibility(
+            visible = appear,
+            enter = fadeIn(
+                initialAlpha = 0.1f,
+                animationSpec = tween(durationMillis = 1500)),
+            exit = fadeOut(
+                animationSpec = tween(durationMillis = 1500))
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.service),
+                contentDescription = "service"
+            )
+        }
+        AnimatedVisibility(
+            visible = !appear,
+            enter = fadeIn(
+                initialAlpha = 0.1f,
+                animationSpec = tween(durationMillis = 5000)),
+            exit = fadeOut(
+                animationSpec = tween(durationMillis = 5000))
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.me),
+                contentDescription = "me"
+            )
+        }
+        Button(
+            onClick = {
+                appear = !appear
+                if(!appear){
+                    h = "關於App作者"
+                }else{
+                    h = "瑪利亞基金會服務總覽"
+                }
+            }
+        ) {
+            if (!appear) Text(text = "服務總覽")
+            else Text(text = "作者：您的系級與姓名")
+        }
+    }
+}
+
+@Composable
+fun twobutton(){
+    var appear by remember { mutableStateOf(true) }
+    var h1 by remember { mutableStateOf("「台中市愛心家園」經市政府公開評選後，委託瑪利亞基金會經營管理，於91年啟用，整棟建築物有四個樓層，目前開辦就醫、就養、就學、就業四大領域的十項業務，提供身心障礙者全方位的服務。\n") }
+    var h2 by remember { mutableStateOf("長按以下圖片，可以觀看愛心家園地圖\n") }
+    Column {
+        Row {
+            Button(
+                onClick = {
+                        h1 = "「台中市愛心家園」經市政府公開評選後，委託瑪利亞基金會經營管理，於91年啟用，整棟建築物有四個樓層，目前開辦就醫、就養、就學、就業四大領域的十項業務，提供身心障礙者全方位的服務。\n"
+                        h2 = "長按以下圖片，可以觀看愛心家園地圖\n"
+                }
+            ) {
+                Text(text = "台中市愛心家園")
+            }
+            Button(
+                onClick = {
+                        h1 = "「瑪利亞學園」提供重度以及極重度多重障礙者日間照顧服務，以健康照護為基礎，支持生活多面向參與及學習概念，輔助發展重度身心障礙者自我概念為最終服務目標。\n"
+                        h2 = "雙擊以下圖片，可以觀看瑪利亞學園地圖\n"
+                }
+            ) {
+                Text(text = "瑪利亞學園")
+            }
+        }
+        Text(text = h1)
+        Text(text = h2, color = Color.Blue)
     }
 }
